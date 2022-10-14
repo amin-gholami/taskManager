@@ -1,9 +1,9 @@
 package amp.service;
 
-import amp.dto.LoginRequest;
-import amp.dto.LoginResponse;
-import amp.dto.RegisterRequest;
-import amp.dto.RegisterResponse;
+import amp.common.dto.request.LoginRequest;
+import amp.common.dto.response.LoginResponse;
+import amp.common.dto.request.RegisterRequest;
+import amp.common.dto.response.RegisterResponse;
 import amp.model.ERole;
 import amp.model.Role;
 import amp.model.User;
@@ -20,8 +20,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import amp.common.exceptions.*;
 
 @Service
 public class UserService {
@@ -57,11 +59,11 @@ public class UserService {
 
     public RegisterResponse register(RegisterRequest registerRequest){
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            return RegisterResponse.builder().message("username is already in use").build();
+            throw new BadRequestException("user is already in use");
         }
 
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            return RegisterResponse.builder().message("email is already in use").build();
+            throw new BadRequestException("email is already in use");
         }
 
         // Create new user's account
@@ -103,5 +105,16 @@ public class UserService {
         userRepository.save(user);
 
         return RegisterResponse.builder().message("user registered successfully").build();
+    }
+
+    public User getUserByUsername(String username){
+        return userRepository.findByUsername(username).get();
+    }
+
+    public User getByUserId(Long id){
+        Optional<User> user = userRepository.findById(id);
+        if(user.isPresent())
+            return user.get();
+        throw new BadRequestException("user does not exist");
     }
 }

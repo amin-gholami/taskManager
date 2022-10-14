@@ -1,19 +1,35 @@
 package amp.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "Card")
+@Table(name = "card")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Document("card")
 public class Card {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "card_id")
     private Long id;
 
     @Column(name ="card_title")
     private String cardTitle;
+
+    @Column(name = "description")
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
@@ -25,7 +41,7 @@ public class Card {
     @Column(name = "modified_on")
     private Timestamp modifiedOn;
 
-    @Column(name = "members")
-    @OneToMany
-    private Set<User> members;
+    @JoinColumn(name = "card_id")
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<User> members;
 }

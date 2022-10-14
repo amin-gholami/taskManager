@@ -1,6 +1,10 @@
 package amp.controller;
 
-import amp.dto.*;
+import amp.common.dto.*;
+import amp.common.dto.request.LoginRequest;
+import amp.common.dto.request.RegisterRequest;
+import amp.common.dto.response.LoginResponse;
+import amp.common.dto.response.RegisterResponse;
 import amp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -26,8 +30,8 @@ public class UserController {
                 .setPath(request.getRequestURI()), OK);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<Response<RegisterResponse>> register(@RequestBody RegisterRequest registerRequest,HttpServletRequest request){
+    @PostMapping("/signUp")
+    public ResponseEntity<Response<RegisterResponse>> register(@RequestBody RegisterRequest registerRequest, HttpServletRequest request){
         return new ResponseEntity<>(new Response<RegisterResponse>().build()
                 .setMessage(userService.register(registerRequest))
                 .setPath(request.getRequestURI()), OK);
